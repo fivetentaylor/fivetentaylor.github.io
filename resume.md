@@ -4,6 +4,6 @@ title: resume
 permalink: /resume/
 ---
 
-#Taylor Sather
+#### Taylor Sather
 
-###blah blah lorem ipsum
+#### lorem ipsum blah blah
