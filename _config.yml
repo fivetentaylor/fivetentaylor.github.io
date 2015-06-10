@@ -10,3 +10,10 @@ github_username: fivetentaylor
 
 # Build settings
 markdown: kramdown
+
+comments :
+  provider : disqus
+  disqus :
+    short_name : fivetentaylor
+
+

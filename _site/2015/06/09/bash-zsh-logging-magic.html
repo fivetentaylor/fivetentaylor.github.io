@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width initial-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>fivetentaylor blog</title>
+    <title>Magical Logging in bash and zsh</title>
     <meta name="description" content="Nothing to see here
 ">
 
     <link rel="stylesheet" href="/css/main.css">
-    <link rel="canonical" href="http://fivetentaylor.github.io/">
+    <link rel="canonical" href="http://fivetentaylor.github.io/2015/06/09/bash-zsh-logging-magic.html">
 </head>
 
 
@@ -58,31 +58,72 @@
 
     <div class="page-content">
       <div class="wrapper">
-        <div class="home">
+        <div class="post">
 
-  <h1 class="page-heading">Posts</h1>
+  <header class="post-header">
+    <h1 class="post-title">Magical Logging in bash and zsh</h1>
+    <p class="post-meta">Jun 9, 2015</p>
+  </header>
 
-  <ul class="post-list">
-    
-      <li>
-        <span class="post-meta">Jun 9, 2015</span>
+  <article class="post-content">
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full" charset="utf-8"></script>
 
-        <h2>
-          <a class="post-link" href="/2015/06/09/bash-zsh-logging-magic.html">Magical Logging in bash and zsh</a>
-        </h2>
-      </li>
-    
-      <li>
-        <span class="post-meta">Jun 7, 2015</span>
+<script type="text/javascript">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\(','\)']],
+    processEscapes: true
+  }
+});
+</script>
 
-        <h2>
-          <a class="post-link" href="/2015/06/07/rank-k-approximation.html">Rank K Approximation</a>
-        </h2>
-      </li>
-    
-  </ul>
+<h2 id="disclaimer">Disclaimer</h2>
+<p>So far this snippet has only been tested on OSX. It should work on any *nix with some fiddling though!</p>
 
-  <p class="rss-subscribe">subscribe <a href="/feed.xml">via RSS</a></p>
+<h2 id="motivation">Motivation</h2>
+<p>I recently decided it’d be cool to log all of my commands and stderr from my interactive zsh sessions. I figured it’d generate a lot of cool data. Also, I’ve been experimenting with the awesome elasticsearch / logstash / kibana stack, and what better way to test it than to fill it up with a bunch of logs!</p>
+
+<p>Here’s the code right off the bat if you just need to copy it!</p>
+
+<h3 id="zsh-version">zsh version</h3>
+<p>Add this to the bottom of your .zshrc file</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">precmd<span class="o">()</span> <span class="o">{</span> <span class="nb">eval</span> <span class="s2">&quot;$PROMPT_COMMAND&quot;</span> <span class="o">}</span>
+<span class="nb">export </span><span class="nv">PROMPT_COMMAND</span><span class="o">=</span><span class="s1">&#39;RETRN_VAL=$?;logger &quot;$(fc -l -1 | sed &quot;s/^[ ]*[0-9]+[ ]*//&quot; ) [$RETRN_VAL]&quot;&#39;</span>
+<span class="nb">exec </span>2&gt; &gt;<span class="o">(</span>tee &gt;<span class="o">(</span>logger -t <span class="k">$(</span><span class="nb">echo</span> <span class="nv">$USER</span><span class="k">)</span>.stderr<span class="o">))</span></code></pre></div>
+
+<h3 id="bash-version">bash version</h3>
+<p>Add this to the bottom of your .bashrc file</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">export </span><span class="nv">PROMPT_COMMAND</span><span class="o">=</span><span class="s1">&#39;RETRN_VAL=$?;logger &quot;$(history 1 | sed &quot;s/^[ ]*[0-9]+[ ]*//&quot; ) [$RETRN_VAL]&quot;&#39;</span>
+<span class="nb">exec </span>2&gt; &gt;<span class="o">(</span>tee &gt;<span class="o">(</span>logger -t <span class="k">$(</span><span class="nb">echo</span> <span class="nv">$USER</span><span class="k">)</span>.stderr<span class="o">))</span></code></pre></div>
+
+<h2 id="explanation">Explanation</h2>
+<p>I’ll break down the zsh version since that’s my primary shell. Zsh doesn’t have the PROMPT_COMMAND magic like bash, so the line</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">precmd<span class="o">()</span> <span class="o">{</span> <span class="nb">eval</span> <span class="s2">&quot;$PROMPT_COMMAND&quot;</span> <span class="o">}</span></code></pre></div>
+
+<p>uses zsh’s “precmd” hook to emulate the behavior. </p>
+
+
+  </article>
+
+  
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES * * */
+        var disqus_shortname = 'fivetentaylor';
+        
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); 
+            dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+  
 
 </div>
 

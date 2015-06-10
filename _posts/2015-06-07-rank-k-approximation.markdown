@@ -2,6 +2,7 @@
 layout: post
 title:  "Rank K Approximation"
 date:   2015-06-07 12:29:28
+comments: true
 ---
 
 <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full" charset="utf-8"></script>
