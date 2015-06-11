@@ -6,8 +6,8 @@
 </description>
     <link>http://fivetentaylor.github.io/</link>
     <atom:link href="http://fivetentaylor.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Tue, 09 Jun 2015 22:28:27 -0700</pubDate>
-    <lastBuildDate>Tue, 09 Jun 2015 22:28:27 -0700</lastBuildDate>
+    <pubDate>Wed, 10 Jun 2015 23:16:32 -0700</pubDate>
+    <lastBuildDate>Wed, 10 Jun 2015 23:16:32 -0700</lastBuildDate>
     <generator>Jekyll v2.4.0</generator>
     
       <item>
@@ -26,19 +26,29 @@ MathJax.Hub.Config({
 &lt;h2 id=&quot;disclaimer&quot;&gt;Disclaimer&lt;/h2&gt;
 &lt;p&gt;So far this snippet has only been tested on OSX. It should work on any *nix with some fiddling though!&lt;/p&gt;
 
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;This &lt;a href=&quot;http://urbanautomaton.com/blog/2014/09/09/redirecting-bash-script-output-to-syslog/&quot;&gt;post from &lt;strong&gt;Simon Coffey&lt;/strong&gt;&lt;/a&gt; gave me the idea to try and log &lt;strong&gt;all&lt;/strong&gt; stderr from the shell to syslog or another logging facility, not just from an individual script&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;This response on &lt;a href=&quot;http://askubuntu.com/questions/93566/how-to-log-all-bash-commands-by-all-users-on-a-server&quot;&gt;ask ubuntu&lt;/a&gt; shows how to capture all commands to syslog&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
 &lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;/h2&gt;
-&lt;p&gt;I recently decided it’d be cool to log all of my commands and stderr from my interactive zsh sessions. I figured it’d generate a lot of cool data. Also, I’ve been experimenting with the awesome elasticsearch / logstash / kibana stack, and what better way to test it than to fill it up with a bunch of logs!&lt;/p&gt;
+&lt;p&gt;I recently decided it’d be fun to log all of my and my coworker’s commands and stderr from our zsh sessions. Not in an Orwellian way, but because they’re all data scientists and it’d generate a lot of cool data! Also, I’ve been experimenting with the awesome &lt;a href=&quot;https://www.elastic.co/&quot;&gt;&lt;strong&gt;elasticsearch, logstash, and kibana stack&lt;/strong&gt;&lt;/a&gt;, and what better way to test it than to fill it up with a bunch of logs!&lt;/p&gt;
 
-&lt;p&gt;Here’s the code right off the bat if you just need to copy it!&lt;/p&gt;
+&lt;p&gt;After some intense googling, there was nothing that did exactly what I wanted.&lt;/p&gt;
 
-&lt;h3 id=&quot;zsh-version&quot;&gt;zsh version&lt;/h3&gt;
+&lt;h2 id=&quot;zsh-version&quot;&gt;zsh version&lt;/h2&gt;
 &lt;p&gt;Add this to the bottom of your .zshrc file&lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;precmd&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;eval&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;$PROMPT_COMMAND&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;PROMPT_COMMAND&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;RETRN_VAL=$?;logger &amp;quot;$(fc -l -1 | sed &amp;quot;s/^[ ]*[0-9]+[ ]*//&amp;quot; ) [$RETRN_VAL]&amp;quot;&amp;#39;&lt;/span&gt;
 &lt;span class=&quot;nb&quot;&gt;exec &lt;/span&gt;2&amp;gt; &amp;gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;tee &amp;gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;logger -t &lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$USER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;.stderr&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;h3 id=&quot;bash-version&quot;&gt;bash version&lt;/h3&gt;
+&lt;h2 id=&quot;bash-version&quot;&gt;bash version&lt;/h2&gt;
 &lt;p&gt;Add this to the bottom of your .bashrc file&lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;PROMPT_COMMAND&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;RETRN_VAL=$?;logger &amp;quot;$(history 1 | sed &amp;quot;s/^[ ]*[0-9]+[ ]*//&amp;quot; ) [$RETRN_VAL]&amp;quot;&amp;#39;&lt;/span&gt;
