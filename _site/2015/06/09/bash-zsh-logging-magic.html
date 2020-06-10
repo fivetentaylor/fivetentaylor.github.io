@@ -77,10 +77,10 @@ MathJax.Hub.Config({
 });
 </script>
 
-<h2 id="disclaimer">Disclaimer</h2>
-<p>So far this snippet has only been tested on OSX. It should work on any *nix with some fiddling though!</p>
+<p>##Disclaimer
+So far this snippet has only been tested on OSX. It should work on any *nix with some fiddling though!</p>
 
-<h2 id="references">References</h2>
+<p>##References</p>
 <ul>
   <li>
     <p>This <a href="http://urbanautomaton.com/blog/2014/09/09/redirecting-bash-script-output-to-syslog/">post from <strong>Simon Coffey</strong></a> gave me the idea to try and log <strong>all</strong> stderr from the shell to syslog or another logging facility, not just from an individual script</p>
@@ -90,30 +90,30 @@ MathJax.Hub.Config({
   </li>
 </ul>
 
-<h2 id="motivation">Motivation</h2>
-<p>I recently decided it’d be fun to log all of my and my coworker’s commands and stderr from our zsh sessions. Not in an Orwellian way, but because they’re all data scientists and it’d generate a lot of cool data! Also, I’ve been experimenting with the awesome <a href="https://www.elastic.co/"><strong>elasticsearch, logstash, and kibana stack</strong></a>, and what better way to test it than to fill it up with a bunch of logs!</p>
+<p>##Motivation
+I recently decided it’d be fun to log all of my and my coworker’s commands and stderr from our zsh sessions. Not in an Orwellian way, but because they’re all data scientists and it’d generate a lot of cool data! Also, I’ve been experimenting with the awesome <a href="https://www.elastic.co/"><strong>elasticsearch, logstash, and kibana stack</strong></a>, and what better way to test it than to fill it up with a bunch of logs!</p>
 
 <p>After some intense googling, there was nothing that did exactly what I wanted.</p>
 
-<h2 id="zsh-version">zsh version</h2>
-<p>Add this to the bottom of your .zshrc file</p>
+<p>##zsh version
+Add this to the bottom of your .zshrc file</p>
 
-<div class="highlight"><pre><code class="language-bash" data-lang="bash">precmd<span class="o">()</span> <span class="o">{</span> <span class="nb">eval</span> <span class="s2">&quot;$PROMPT_COMMAND&quot;</span> <span class="o">}</span>
-<span class="nb">export </span><span class="nv">PROMPT_COMMAND</span><span class="o">=</span><span class="s1">&#39;RETRN_VAL=$?;logger &quot;$(fc -l -1 | sed &quot;s/^[ ]*[0-9]+[ ]*//&quot; ) [$RETRN_VAL]&quot;&#39;</span>
-<span class="nb">exec </span>2&gt; &gt;<span class="o">(</span>tee &gt;<span class="o">(</span>logger -t <span class="k">$(</span><span class="nb">echo</span> <span class="nv">$USER</span><span class="k">)</span>.stderr<span class="o">))</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">precmd<span class="o">()</span> <span class="o">{</span> <span class="nb">eval</span> <span class="s2">"</span><span class="nv">$PROMPT_COMMAND</span><span class="s2">"</span> <span class="o">}</span>
+<span class="nb">export </span><span class="nv">PROMPT_COMMAND</span><span class="o">=</span><span class="s1">'RETRN_VAL=$?;logger "$(fc -l -1 | sed "s/^[ ]*[0-9]+[ ]*//" ) [$RETRN_VAL]"'</span>
+<span class="nb">exec </span>2&gt; <span class="o">&gt;(</span><span class="nb">tee</span> <span class="o">&gt;(</span>logger <span class="nt">-t</span> <span class="si">$(</span><span class="nb">echo</span> <span class="nv">$USER</span><span class="si">)</span>.stderr<span class="o">))</span></code></pre></figure>
 
-<h2 id="bash-version">bash version</h2>
-<p>Add this to the bottom of your .bashrc file</p>
+<p>##bash version
+Add this to the bottom of your .bashrc file</p>
 
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">export </span><span class="nv">PROMPT_COMMAND</span><span class="o">=</span><span class="s1">&#39;RETRN_VAL=$?;logger &quot;$(history 1 | sed &quot;s/^[ ]*[0-9]+[ ]*//&quot; ) [$RETRN_VAL]&quot;&#39;</span>
-<span class="nb">exec </span>2&gt; &gt;<span class="o">(</span>tee &gt;<span class="o">(</span>logger -t <span class="k">$(</span><span class="nb">echo</span> <span class="nv">$USER</span><span class="k">)</span>.stderr<span class="o">))</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">export </span><span class="nv">PROMPT_COMMAND</span><span class="o">=</span><span class="s1">'RETRN_VAL=$?;logger "$(history 1 | sed "s/^[ ]*[0-9]+[ ]*//" ) [$RETRN_VAL]"'</span>
+<span class="nb">exec </span>2&gt; <span class="o">&gt;(</span><span class="nb">tee</span> <span class="o">&gt;(</span>logger <span class="nt">-t</span> <span class="si">$(</span><span class="nb">echo</span> <span class="nv">$USER</span><span class="si">)</span>.stderr<span class="o">))</span></code></pre></figure>
 
-<h2 id="explanation">Explanation</h2>
-<p>I’ll break down the zsh version since that’s my primary shell. Zsh doesn’t have the PROMPT_COMMAND magic like bash, so the line</p>
+<p>##Explanation
+I’ll break down the zsh version since that’s my primary shell. Zsh doesn’t have the PROMPT_COMMAND magic like bash, so the line</p>
 
-<div class="highlight"><pre><code class="language-bash" data-lang="bash">precmd<span class="o">()</span> <span class="o">{</span> <span class="nb">eval</span> <span class="s2">&quot;$PROMPT_COMMAND&quot;</span> <span class="o">}</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">precmd<span class="o">()</span> <span class="o">{</span> <span class="nb">eval</span> <span class="s2">"</span><span class="nv">$PROMPT_COMMAND</span><span class="s2">"</span> <span class="o">}</span></code></pre></figure>
 
-<p>uses zsh’s “precmd” hook to emulate the behavior. </p>
+<p>uses zsh’s “precmd” hook to emulate the behavior.</p>
 
 
   </article>
